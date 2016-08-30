@@ -47,6 +47,11 @@ export const MarketList = ({markets, onMarketClick, currentId}) => {
     return <div className={css(styles.markets)}>{marketList}</div>
 };
 
+export const OutcomeList = ({outcomes, onOutcomeClick, market}) => {
+    const outcomeList = map(Outcome, map(assoc("onClick", onOutcomeClick), pickMarketOutcomes(outcomes)(market)));
+    return <div className={css(styles.outcomes)}>{outcomeList}</div>;
+}
+
 // @todo: Order Markets by displayOrder
 // @todo: Could the display of outcomes be abstracted in a testable way (similar to MarketList)?
 export class Markets extends Component {
@@ -72,7 +77,8 @@ export class Markets extends Component {
         return (
             <div className={css(styles.panel)}>
                 <MarketList onMarketClick={this.onMarketClick.bind(this)} markets={markets} currentId={currentId}/>
-                <div className={css(styles.outcomes)}>{outcomeList}</div>
+                {/*<div className={css(styles.outcomes)}>{outcomeList}</div>*/}
+                <OutcomeList onOutcomeClick={onOutcomeClick} outcomes={outcomes} market={market}/>
             </div>
         )
     }
