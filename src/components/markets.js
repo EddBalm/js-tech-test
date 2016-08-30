@@ -4,7 +4,7 @@ import {StyleSheet, css} from "aphrodite";
 import {firstMarketId} from "../model/markets";
 
 // @todo: Identify visually when a market is showing its outcomes in the middle panel
-// Used assoc to add the currentId to every item in markets, similar to how onClick was added to each.
+// - Used assoc to add the currentId to every item in markets, similar to how onClick was added to each.
 export const MarketTitle = ({name, outcomes, marketId, onClick, currentId}) => {
     var titleStyle = css(styles.marketTitle);
     const count = outcomes.length;
@@ -39,7 +39,7 @@ export const Outcome = ({name, price, outcomeId, onClick}) => {
 const pickMarketOutcomes = outcomes => market => market.outcomes.map(id => outcomes[id]);
 
 export const MarketList = ({markets, onMarketClick, currentId}) => {
-    const marketList = map(MarketTitle, map(assoc("currentId", currentId), map(assoc("onClick", onMarketClick), values(markets))));
+    const marketList = map(MarketTitle, map(assoc("currentId", currentId), map(assoc("onClick", onMarketClick), markets)));
     return <div className={css(styles.markets)}>{marketList}</div>
 };
 
@@ -49,6 +49,8 @@ export const OutcomeList = ({outcomes, onOutcomeClick, market}) => {
 }
 
 // @todo: Order Markets by displayOrder
+// - Sorted by displayOrder (lowest -> highest). (values(markets)) was sorted, stored and sent to MarketList.
+// - Because of this MarketList was changed to use markets instead of (values(markets)). 
 // @todo: Could the display of outcomes be abstracted in a testable way (similar to MarketList)?
 // - Abstracted to OutcomeList, which is similar to MarketList. Need to demonstrate testability.
 export class Markets extends Component {
@@ -80,17 +82,12 @@ export class Markets extends Component {
     render() {
         const {onOutcomeClick, outcomes, markets} = this.props;
         const market = markets[this.state.currentMarket];
-
-        // Testing markets sorting.
-        console.log((values(markets)).sort(this.marketSort("displayOrder")));
-        console.log(markets);
-
-
+        const sortedMarkets = (values(markets)).sort(this.marketSort("displayOrder"));
         var currentId = market.marketId;
         const outcomeList = map(Outcome, map(assoc("onClick", onOutcomeClick), pickMarketOutcomes(outcomes)(market)));
         return (
             <div className={css(styles.panel)}>
-                <MarketList onMarketClick={this.onMarketClick.bind(this)} markets={markets} currentId={currentId}/>
+                <MarketList onMarketClick={this.onMarketClick.bind(this)} markets={sortedMarkets} currentId={currentId}/>
                 {/*<div className={css(styles.outcomes)}>{outcomeList}</div>*/}
                 <OutcomeList onOutcomeClick={onOutcomeClick} outcomes={outcomes} market={market}/>
             </div>
