@@ -7,9 +7,6 @@ import {firstMarketId} from "../model/markets";
 // Used assoc to add the currentId to every item in markets, similar to how onClick was added to each.
 export const MarketTitle = ({name, outcomes, marketId, onClick, currentId}) => {
     var titleStyle = css(styles.marketTitle);
-    
-    console.log("Market Title " + currentId);
-
     const count = outcomes.length;
     const clickHandler = () => {
         onClick(marketId);
@@ -19,7 +16,6 @@ export const MarketTitle = ({name, outcomes, marketId, onClick, currentId}) => {
         titleStyle = css(styles.currentMarketTitle);
     };
 
-    // css(styles.marketTitle)
     return (
         <h2 key={marketId} className={titleStyle} onClick={clickHandler}> 
             {name} <small className={css(styles.betCount)}>({count} bets)</small>
@@ -54,6 +50,7 @@ export const OutcomeList = ({outcomes, onOutcomeClick, market}) => {
 
 // @todo: Order Markets by displayOrder
 // @todo: Could the display of outcomes be abstracted in a testable way (similar to MarketList)?
+// - Abstracted to OutcomeList, which is similar to MarketList. Need to demonstrate testability.
 export class Markets extends Component {
     constructor(props) {
         super(props);
@@ -69,9 +66,26 @@ export class Markets extends Component {
         });
     }
 
+    marketSort(field) {
+        return function(a, b) {
+            if( a[field] > b[field]) {
+                return 1;
+            } else if ( a[field] < b[field]) {
+                return -1;
+            }
+            return 0;
+        };
+    }
+
     render() {
         const {onOutcomeClick, outcomes, markets} = this.props;
         const market = markets[this.state.currentMarket];
+
+        // Testing markets sorting.
+        console.log((values(markets)).sort(this.marketSort("displayOrder")));
+        console.log(markets);
+
+
         var currentId = market.marketId;
         const outcomeList = map(Outcome, map(assoc("onClick", onOutcomeClick), pickMarketOutcomes(outcomes)(market)));
         return (
