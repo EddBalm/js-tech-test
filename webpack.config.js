@@ -7,6 +7,8 @@ module.exports = {
         path: path.join(__dirname, "build/assets"),
         publicPath: "/assets"
     },
+    debug: true,
+    devtool: "#eval-source-map",
     module: {
         loaders: [
             {
