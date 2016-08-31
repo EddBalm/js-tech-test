@@ -24,10 +24,17 @@ export const MarketTitle = ({name, outcomes, marketId, onClick, currentId}) => {
 };
 
 // @todo: Identify visually when an outcome is "selected"
-export const Outcome = ({name, price, outcomeId, onClick}) => {
+export const Outcome = ({name, price, outcomeId, onClick, selected}) => {
     const clickHandler = () => {
         onClick(outcomeId);
     };
+
+    var outcomeCellStyle = css(styles.outcomeCell);
+
+    if (selected) {
+        outcomeCellStyle = css(styles.outcomeCellSelected);
+    }
+
     return (
         <div key={outcomeId} className={css(styles.outcome)} onClick={clickHandler}>
             <div className={css(styles.outcomeName, styles.outcomeCell)}>{name}</div>
@@ -43,7 +50,8 @@ export const MarketList = ({markets, onMarketClick, currentId}) => {
     return <div className={css(styles.markets)}>{marketList}</div>
 };
 
-export const OutcomeList = ({outcomes, onOutcomeClick, market}) => {
+export const OutcomeList = ({outcomes, onOutcomeClick, market, selections}) => {
+    outcomes = map(assoc("selected", false), outcomes);
     const outcomeList = map(Outcome, map(assoc("onClick", onOutcomeClick), pickMarketOutcomes(outcomes)(market)));
     return <div className={css(styles.outcomes)}>{outcomeList}</div>;
 }
@@ -80,7 +88,8 @@ export class Markets extends Component {
     }
 
     render() {
-        const {onOutcomeClick, outcomes, markets} = this.props;
+        const {onOutcomeClick, outcomes, markets, selections} = this.props;
+        console.log(selections);
         const market = markets[this.state.currentMarket];
         const sortedMarkets = (values(markets)).sort(this.marketSort("displayOrder"));
         var currentId = market.marketId;
@@ -89,7 +98,7 @@ export class Markets extends Component {
             <div className={css(styles.panel)}>
                 <MarketList onMarketClick={this.onMarketClick.bind(this)} markets={sortedMarkets} currentId={currentId}/>
                 {/*<div className={css(styles.outcomes)}>{outcomeList}</div>*/}
-                <OutcomeList onOutcomeClick={onOutcomeClick} outcomes={outcomes} market={market}/>
+                <OutcomeList onOutcomeClick={onOutcomeClick} outcomes={outcomes} market={market} selections={selections}/>
             </div>
         )
     }
@@ -100,8 +109,8 @@ const styles = StyleSheet.create({
     marketTitle: {
         fontFamily: "sans-serif",
         fontSize: "16px",
-        color: "white", 
-        backgroundColor: "#0938B8",
+        color: "black", 
+        backgroundColor: "#FFF",
         borderBottom: "1px solid #ccc",
         margin: 0,
         padding: "1em",
@@ -110,8 +119,8 @@ const styles = StyleSheet.create({
     currentMarketTitle: {
         fontFamily: "sans-serif",
         fontSize: "16px",
-        color: "black",
-        backgroundColor: "#FFF",
+        color: "white",
+        backgroundColor: "#0938B8",
         borderBottom: "1px solid #ccc",
         margin: 0,
         padding: "1em",
