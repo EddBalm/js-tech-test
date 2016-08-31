@@ -32,18 +32,27 @@ export class App extends Component {
         });
     }
 
+    onSelectionClick(id) {
+        const {selections} = this.state;
+
+        this.setState( {
+            selections: without([id], selections)
+        });
+    }
+
     render() {
         const { markets, outcomes } = this.props;
         var selections = this.state.selections;
         return (
             <div className={css(styles.parent)}>
                 <div className={css(styles.markets)}>
+
                     <Markets markets={markets} outcomes={outcomes} marketId={this.state.currentMarket}
-                             onOutcomeClick={this.onOutcomeClick.bind(this)} selections={selections}
-                    />
+                             onOutcomeClick={this.onOutcomeClick.bind(this)} selections={selections}>
+                    </Markets>
                 </div>
                 <div className={css(styles.feedback)}>
-                    <Selections outcomes={outcomes} markets={markets} selections={selections}/>
+                    <Selections outcomes={outcomes} markets={markets} selections={selections} onSelectionClick={this.onSelectionClick.bind(this)}/>
                     { /* @todo: Add a new component here to show suggested RequestABets based on selected outcomes*/}
                     { /* See the overview in the main entry file, but the suggestions should be ordered from most relevant to least and limited to 10 outcomes */}
                 </div>
@@ -53,6 +62,11 @@ export class App extends Component {
 }
 
 const styles = StyleSheet.create({
+    "button": {
+        display: "inline-block",
+        width: "100%",
+        height: "100px"
+    },
     "parent": {
         display: "flex",
         flexBasis: "row",

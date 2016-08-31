@@ -89,7 +89,6 @@ export class Markets extends Component {
 
     render() {
         const {onOutcomeClick, outcomes, markets, selections} = this.props;
-        console.log(selections);
         const market = markets[this.state.currentMarket];
         const sortedMarkets = (values(markets)).sort(this.marketSort("displayOrder"));
         var currentId = market.marketId;
